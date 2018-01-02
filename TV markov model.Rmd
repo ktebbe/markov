@@ -132,15 +132,23 @@ for(ep_num in 1:length(ep_list)){
 
 Keep only top characters
 ```{r}
-## remove pucntuation from names
-quotes <- gsub("[[:punct:]]", "", quotes[, 1])
+## remove punctuation from names
+#quotes[, 1] <- gsub("[[:punct:]]", "", quotes[, 1])
+
 ## frequency table of characters
 quotes[, .N, by = name][order(-N)]
 
 
 ## still some errors, but just dropping those lines
-keep <- 
+keep <- c("Aang", "Sokka", "Katara", "Zuko", "Toph", "Iroh")
+top_quotes <- quotes[quotes$name %in% keep, ]
+```
+
+
+Making the first Markov model - for Aang!
+```{r}
 
 ```
 
+Make sure to use Katz Back-off Model
 
