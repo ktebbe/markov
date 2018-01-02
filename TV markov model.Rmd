@@ -1,0 +1,130 @@
+---
+title: "TV dialogue markov model"
+output: html_notebook
+---
+
+First we will scrape dialogue from Avatar: The Last Airbender (ATLA) from the website AvatarSpirit.net
+
+Scripts from here - http://www.simplyscripts.com/tv_all.html
+
+```{r}
+## trying rvest library
+library(rvest)
+library(data.table)  
+ep_list <- c(101:120, 201:220, 301:321)
+
+url1 <- "http://atla.avatarspirit.net/transcripts.php?num=120"
+webpage <- read_html(url1)
+
+webpage %>% 
+  html_nodes("b") %>%
+  html_text()
+
+all <- webpage %>% 
+  html_nodes("blockquote") %>%
+  html_text()
+
+#remove all text in parenthesis & brackets
+all <- gsub("\\(.*?\\)", "", all)
+all <- gsub("\\[.*?\\]", "", all)
+
+## remove all text before "Act I" (metadata)
+all <- sub("Act I","REMOVEME", all)
+all <- gsub(".*REMOVEME", " ", all)
+
+## remove "Act II" etc.
+#all <- gsub("Act I", " ", all)
+all <- gsub("Act II", " ", all)
+all <- gsub("Act III", " ", all)
+all <- gsub("Act IV", " ", all)
+
+# remove quotes (e.g. "Master Katara" -> Master Katara)
+all <- gsub("\\\"", "", all)
+
+## split lines on all punctuation
+lines <- unlist(strsplit(all, "(?<=[[:punct:]])", perl=T))
+
+## lines with : -> character name
+## all other lines -> most recent character's name's lines
+quotes <- data.table(name=character(), quote=character())
+
+current_line <- nrow(quotes)
+for(i in 1:length(lines)){
+  if(grepl(":", lines[i])){ # make a new line
+    quotes <- rbind(quotes, data.table(name = gsub("\\:|\\s", "", lines[i]), quote="")) # add character name
+    current_line <- current_line + 1 #update line counter
+  }
+  else{
+    quotes[current_line,"quote"] <- paste(quotes[current_line,"quote"], lines[i])
+  }
+}
+
+```
+
+Function that takes in a URL and returns a data table of quotes
+```{r}
+library(rvest)
+library(data.table) 
+pull_quotes <- function(URL) {
+  webpage <- read_html(URL)
+  all <- webpage %>% 
+    html_nodes("blockquote") %>%
+    html_text()
+  #remove all text in parenthesis & brackets
+  all <- gsub("\\(.*?\\)", "", all)
+  all <- gsub("\\[.*?\\]", "", all)
+  
+  ## remove all text before "Act I" (metadata)
+  all <- sub("Act I","REMOVEME", all)
+  all <- gsub(".*REMOVEME", " ", all)
+  
+  ## remove "Act II" etc.
+  #all <- gsub("Act I", " ", all)
+  all <- gsub("Act II", " ", all)
+  all <- gsub("Act III", " ", all)
+  all <- gsub("Act IV", " ", all)
+  
+  # remove quotes (e.g. "Master Katara" -> Master Katara)
+  all <- gsub("\\\"", "", all)
+  
+  ## split lines on all punctuation
+  lines <- unlist(strsplit(all, "(?<=[[:punct:]])", perl=T))
+  
+  ## lines with : -> character name
+  ## all other lines -> most recent character's name's lines
+  quotes <- data.table(name=character(), quote=character())
+  
+  current_line <- nrow(quotes)
+  for(i in 1:length(lines)){
+    if(grepl(":", lines[i])){ # make a new line
+      quotes <- rbind(quotes, data.table(name = gsub("\\:|\\s", "", lines[i]), quote="")) # add character name
+      current_line <- current_line + 1 #update line counter
+    }
+    else{
+      quotes[current_line,"quote"] <- paste(quotes[current_line,"quote"], lines[i])
+    }
+  }
+  return(quotes)
+}
+
+```
+
+
+Go through all episodes and add to quotes data table
+```{r}
+ep_list <- c(101:120, 201:220, 301:321)
+quotes <- data.table(name=character(), quote=character())
+for(ep_num in 1:length(ep_list)){
+  base_url <- "http://atla.avatarspirit.net/transcripts.php?num="
+  new_url <- paste(base_url, ep_list[ep_num], sep="")
+  
+  quotes <- rbind(quotes, pull_quotes(new_url))
+}
+```
+
+Keep only top characters
+```{r}
+
+```
+
+
