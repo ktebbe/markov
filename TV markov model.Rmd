@@ -13,7 +13,7 @@ library(rvest)
 library(data.table)  
 ep_list <- c(101:120, 201:220, 301:321)
 
-url1 <- "http://atla.avatarspirit.net/transcripts.php?num=102"
+url1 <- "http://atla.avatarspirit.net/transcripts.php?num=108"
 webpage <- read_html(url1)
 
 all <- webpage %>% 
@@ -30,8 +30,8 @@ all <- gsub(".*REMOVEME", " ", all)
 
 ## remove "Act II" etc.
 #all <- gsub("Act I", " ", all)
-all <- gsub("Act II", " ", all)
 all <- gsub("Act III", " ", all)
+all <- gsub("Act II", " ", all)
 all <- gsub("Act IV", " ", all)
 
 # remove quotes (e.g. "Master Katara" -> Master Katara)
@@ -76,8 +76,8 @@ pull_quotes <- function(URL) {
   
   ## remove "Act II" etc.
   #all <- gsub("Act I", " ", all)
-  all <- gsub("Act II", " ", all)
   all <- gsub("Act III", " ", all)
+  all <- gsub("Act II", " ", all)
   all <- gsub("Act IV", " ", all)
   
   # remove quotes (e.g. "Master Katara" -> Master Katara)
@@ -110,9 +110,9 @@ Looking at errors
 ## look at 2nd episode
 ## trouble when sentences end on "--"
 
-## 1st episode -> colons appear outside of quotes
+## issue when sentence doesn't end with any punctuation
 
-test <- pull_quotes("http://atla.avatarspirit.net/transcripts.php?num=102")
+test <- pull_quotes("http://atla.avatarspirit.net/transcripts.php?num=108")
 
 ```
 
@@ -132,8 +132,14 @@ for(ep_num in 1:length(ep_list)){
 
 Keep only top characters
 ```{r}
+## remove pucntuation from names
+quotes <- gsub("[[:punct:]]", "", quotes[, 1])
 ## frequency table of characters
-quotes[, .N, by = name]
+quotes[, .N, by = name][order(-N)]
+
+
+## still some errors, but just dropping those lines
+keep <- 
 
 ```
 
