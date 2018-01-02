@@ -13,12 +13,8 @@ library(rvest)
 library(data.table)  
 ep_list <- c(101:120, 201:220, 301:321)
 
-url1 <- "http://atla.avatarspirit.net/transcripts.php?num=120"
+url1 <- "http://atla.avatarspirit.net/transcripts.php?num=102"
 webpage <- read_html(url1)
-
-webpage %>% 
-  html_nodes("b") %>%
-  html_text()
 
 all <- webpage %>% 
   html_nodes("blockquote") %>%
@@ -41,8 +37,8 @@ all <- gsub("Act IV", " ", all)
 # remove quotes (e.g. "Master Katara" -> Master Katara)
 all <- gsub("\\\"", "", all)
 
-## split lines on all punctuation
-lines <- unlist(strsplit(all, "(?<=[[:punct:]])", perl=T))
+## split lines on selected punctuation
+lines <- unlist(strsplit(all, "(?<=[\\:|\\.|\\?|\\!|\\-|\\—|\\–])", perl=T))
 
 ## lines with : -> character name
 ## all other lines -> most recent character's name's lines
@@ -87,8 +83,8 @@ pull_quotes <- function(URL) {
   # remove quotes (e.g. "Master Katara" -> Master Katara)
   all <- gsub("\\\"", "", all)
   
-  ## split lines on all punctuation
-  lines <- unlist(strsplit(all, "(?<=[[:punct:]])", perl=T))
+  ## split lines on selected punctuation
+  lines <- unlist(strsplit(all, "(?<=[\\:|\\.|\\?|\\!|\\-|\\—|\\–])", perl=T))
   
   ## lines with : -> character name
   ## all other lines -> most recent character's name's lines
@@ -109,6 +105,18 @@ pull_quotes <- function(URL) {
 
 ```
 
+Looking at errors
+```{r}
+## look at 2nd episode
+## trouble when sentences end on "--"
+
+## 1st episode -> colons appear outside of quotes
+
+test <- pull_quotes("http://atla.avatarspirit.net/transcripts.php?num=102")
+
+```
+
+
 
 Go through all episodes and add to quotes data table
 ```{r}
@@ -117,13 +125,15 @@ quotes <- data.table(name=character(), quote=character())
 for(ep_num in 1:length(ep_list)){
   base_url <- "http://atla.avatarspirit.net/transcripts.php?num="
   new_url <- paste(base_url, ep_list[ep_num], sep="")
-  
   quotes <- rbind(quotes, pull_quotes(new_url))
+  print(paste("Done with Episode ", ep_list[ep_num]))
 }
 ```
 
 Keep only top characters
 ```{r}
+## frequency table of characters
+quotes[, .N, by = name]
 
 ```
 
