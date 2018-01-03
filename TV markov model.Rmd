@@ -147,6 +147,27 @@ top_quotes <- quotes[quotes$name %in% keep, ]
 
 Making the first Markov model - for Aang!
 ```{r}
+## making trigram
+aangQuotes <- quotes %>% filter(name == "Aang")
+
+## replacing punctuation
+aangQuotes[,2] <- trimws(gsub("\\. \\. \\. |\\. \\. \\. \\. |\\. \\. \\.", " PPAUSE ", aangQuotes[,2]))
+aangQuotes[,2] <- trimws(gsub("\\.", " PPERIOD ", aangQuotes[,2]))
+aangQuotes[,2] <- trimws(gsub("\\,", " CCOMMA ", aangQuotes[,2]))
+aangQuotes[,2] <- trimws(gsub("\\?", " QQUESTION ", aangQuotes[,2]))
+aangQuotes[,2] <- trimws(gsub("\\!", " EEXCLAMATION ", aangQuotes[,2]))
+aangQuotes[,2] <- trimws(gsub("\\-|\\—|\\–", " DDASH ", aangQuotes[,2]))
+
+
+aangTrigram <- data.table(w1=character(), w2=character(), w3=character(), counts=numeric())
+
+for(i in 1:nrow(aangQuotes)){
+  ## split into tokens
+  tokens <- strsplit(aangQuotes[1,2], " ", perl=T)
+  
+}
+
+
 
 ```
 

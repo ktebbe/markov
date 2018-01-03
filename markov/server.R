@@ -17,7 +17,7 @@ shinyServer(function(input, output) {
   }) 
   
   output$buttonUI <- renderUI({
-    actionButton("button", label = "Show random line")
+    actionButton("button", label = h4("Show random line"))
   })
   ##--------------------------##
   
@@ -32,7 +32,7 @@ shinyServer(function(input, output) {
         randomQuote <- sample((quotes %>% filter(name == names[i]))[,2], 1)
         
         stringToPrint <- c(stringToPrint,"<b>", names[i], ": </b>")
-        stringToPrint <- c(stringToPrint, randomQuote, "<br>")
+        stringToPrint <- c(stringToPrint, randomQuote, "<br> <br>")
       }
     }
     
