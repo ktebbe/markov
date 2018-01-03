@@ -1,7 +1,14 @@
 library(shiny)
+library(dplyr)
 
 shinyServer(function(input, output) {
+  ## reading in csv with quotes
+  quoteData <- reactive({
+    quotes <- fread("top_quotes.csv", header=T, fill=T, data.table=T, col.names=c("drop", "name", "quote"))
+    quotes <- quotes[,-1]
+  })
   
+  ##----- sidebar widgets ------##
   output$charactersUI <- renderUI({
     checkboxGroupInput("characters", label = h3("Who?"), 
                        choices = list("Aang", "Sokka", "Katara", "Toph", "Zuko", "Iroh"),
@@ -12,26 +19,20 @@ shinyServer(function(input, output) {
   output$buttonUI <- renderUI({
     actionButton("button", label = "Show random line")
   })
-  
-  ## will update when use clicks button
-  random <- reactiveValues(clicked = c())
-  
-  ## watching for button press
-  # observeEvent(input$button,{
-  #   random[['clicked']] <- c(random[['clicked']], 1)
-  # })
-  # 
-  # text <- reactiveValues(quotes = c("testing"))
-  
-  
+  ##--------------------------##
   
   output$textUI <- renderUI({
     names <- isolate(input$characters)
     stringToPrint <- c()
+    quotes <- quoteData()
     
     if(length(input$button) > 0 && input$button){
       for(i in 1:length(names)){
-        stringToPrint <- c(stringToPrint,"<b>", names[i], ": </b>", "<br>")
+        
+        randomQuote <- sample((quotes %>% filter(name == names[i]))[,2], 1)
+        
+        stringToPrint <- c(stringToPrint,"<b>", names[i], ": </b>")
+        stringToPrint <- c(stringToPrint, randomQuote, "<br>")
       }
     }
     
