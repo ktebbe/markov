@@ -9,12 +9,13 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
        uiOutput("entry"),
-       uiOutput("charactersInput")
+       uiOutput("charactersUI"),
+       uiOutput("buttonUI")
     ),
     
    
     mainPanel(
-       uiOutput("dialogue")
+       uiOutput("textUI")
     )
   )
 ))
