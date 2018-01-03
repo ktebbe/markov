@@ -26,7 +26,7 @@ shinyServer(function(input, output) {
   
   
   output$textUI <- renderUI({
-    names <- input$characters
+    names <- isolate(input$characters)
     stringToPrint <- c()
     
     if(length(input$button) > 0 && input$button){
