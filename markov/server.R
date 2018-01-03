@@ -13,20 +13,28 @@ shinyServer(function(input, output) {
     actionButton("button", label = "Show random line")
   })
   
-  ## watching for button press
-  observeEvent(input$button,{
-    
-  })
+  ## will update when use clicks button
+  random <- reactiveValues(clicked = c())
   
-  text <- reactiveValues(quotes = c("testing"))
+  ## watching for button press
+  # observeEvent(input$button,{
+  #   random[['clicked']] <- c(random[['clicked']], 1)
+  # })
+  # 
+  # text <- reactiveValues(quotes = c("testing"))
+  
+  
   
   output$textUI <- renderUI({
     names <- input$characters
     stringToPrint <- c()
-    for(i in 1:length(names)){
-      stringToPrint <- c(stringToPrint, names[i], "<br>")
+    
+    if(length(input$button) > 0 && input$button){
+      for(i in 1:length(names)){
+        stringToPrint <- c(stringToPrint,"<b>", names[i], ": </b>", "<br>")
+      }
     }
-    #paste(text[['quotes']], names)
+    
     HTML(stringToPrint)
   })
   
