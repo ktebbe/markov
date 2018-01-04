@@ -147,53 +147,58 @@ top_quotes <- quotes[quotes$name %in% keep, ]
 Making the first Markov model - for Aang!
 ```{r}
 library(dplyr)
-## pulling Aang quotes
-aangQuotes <- quotes %>% filter(name == "Aang")
-
-## replacing punctuation
-aangQuotes[,2] <- trimws(gsub("\\. \\. \\. |\\. \\. \\. \\. |\\. \\. \\.", " PPAUSE ", aangQuotes[,2]))
-aangQuotes[,2] <- trimws(gsub("\\.", " PPERIOD ", aangQuotes[,2]))
-aangQuotes[,2] <- trimws(gsub("\\,", " CCOMMA ", aangQuotes[,2]))
-aangQuotes[,2] <- trimws(gsub("\\?", " QQUESTION ", aangQuotes[,2]))
-aangQuotes[,2] <- trimws(gsub("\\!", " EEXCLAMATION ", aangQuotes[,2]))
-aangQuotes[,2] <- trimws(gsub("\\-|\\—|\\–", " DDASH ", aangQuotes[,2]))
-
-## removing empty rows
-aangQuotes <- aangQuotes[aangQuotes$quote != "",]
-
-
-## allocate tons of rows now for efficiency
-totalWords <- sum(sapply(aangQuotes[,2], function(x) length(unlist(strsplit(x, " ")))))
-aangTrigram <- as.data.table(matrix(ncol = 3, nrow = totalWords))
-
-colnames(aangTrigram) <- c("w1", "w2", "w3")
-aangTrigram <- aangTrigram[, w1:=as.character(w1)]
-aangTrigram <- aangTrigram[, w2:=as.character(w2)]
-aangTrigram <- aangTrigram[, w3:=as.character(w3)]
-
-count <- 1L
-for(i in 1:nrow(aangQuotes)){
-  ## split into tokens, make lowercase
-  tokens <- tolower(unlist(strsplit(aangQuotes[i,2], " ", perl=T)))
+generateTrigram <- function(characterName){
+  ## pulling Aang quotes
+  characterQuotes <- quotes %>% filter(name == characterName)
   
-  ## remove empty strings & \r
-  tokens <- tokens[tokens != ""]
-  tokens <- tokens[tokens != "\r"]
+  ## replacing punctuation
+  characterQuotes[,2] <- trimws(gsub("\\. \\. \\. |\\. \\. \\. \\. |\\. \\. \\.", " PPAUSE ", characterQuotes[,2]))
+  characterQuotes[,2] <- trimws(gsub("\\.", " PPERIOD ", characterQuotes[,2]))
+  characterQuotes[,2] <- trimws(gsub("\\,", " CCOMMA ", characterQuotes[,2]))
+  characterQuotes[,2] <- trimws(gsub("\\?", " QQUESTION ", characterQuotes[,2]))
+  characterQuotes[,2] <- trimws(gsub("\\!", " EEXCLAMATION ", characterQuotes[,2]))
+  characterQuotes[,2] <- trimws(gsub("\\-|\\—|\\–", " DDASH ", characterQuotes[,2]))
   
-  ## add SSTART and EEND 
-  tokens <- c("sstart", "sstart", tokens, "eend")
+  ## removing empty rows
+  characterQuotes <- characterQuotes[characterQuotes$quote != "",]
   
-  ## loop through tokens
-  for(j in 1:(length(tokens)-2)){
-    set(aangTrigram, count, names(aangTrigram), list(tokens[j], tokens[j+1], tokens[j+2])) 
-    count = count + 1L
+  
+  ## allocate tons of rows now for efficiency
+  totalWords <- sum(sapply(characterQuotes[,2], function(x) length(unlist(strsplit(x, " ")))))
+  characterTrigram <- as.data.table(matrix(ncol = 3, nrow = totalWords))
+  
+  colnames(characterTrigram) <- c("w1", "w2", "w3")
+  characterTrigram <- characterTrigram[, w1:=as.character(w1)]
+  characterTrigram <- characterTrigram[, w2:=as.character(w2)]
+  characterTrigram <- characterTrigram[, w3:=as.character(w3)]
+  
+  count <- 1L
+  for(i in 1:nrow(characterQuotes)){
+    ## split into tokens, make lowercase
+    tokens <- tolower(unlist(strsplit(characterQuotes[i,2], " ", perl=T)))
+    
+    ## remove empty strings & \r
+    tokens <- tokens[tokens != ""]
+    tokens <- tokens[tokens != "\r"]
+    
+    ## add SSTART and EEND 
+    tokens <- c("sstart", "sstart", tokens, "eend")
+    
+    ## loop through tokens
+    for(j in 1:(length(tokens)-2)){
+      set(characterTrigram, count, names(characterTrigram), list(tokens[j], tokens[j+1], tokens[j+2])) 
+      count = count + 1L
+    }
   }
+  
+  ## merge duplicate trigrams
+  characterTrigram <- characterTrigram[,.N,.(w1,w2,w3)][order(-N)]
+  ## remove null row
+  characterTrigram <- characterTrigram[-which(is.na(characterTrigram$w1)),]
+  
+  return(characterTrigram)
 }
 
-## merge duplicate trigrams
-aangTrigram <- aangTrigram[,.N,.(w1,w2,w3)][order(-N)]
-## remove null row
-aangTrigram <- aangTrigram[-which(is.na(aangTrigram$w1)),]
 
 ```
 
@@ -201,7 +206,8 @@ Running trigram function for all characters
 ```{r}
 
 aangTrigram <- generateTrigram("Aang")
-
+sokkaTrigram <- generateTrigram("Sokka")
+ 
 ```
 
 
