@@ -136,7 +136,7 @@ Keep only top characters
 #quotes[, 1] <- gsub("[[:punct:]]", "", quotes[, 1])
 
 ## frequency table of characters
-quotes[, .N, by = name][order(-N)]
+#quotes[, .N, by = name][order(-N)]
 
 
 ## still some errors, but just dropping those lines
@@ -147,7 +147,8 @@ top_quotes <- quotes[quotes$name %in% keep, ]
 
 Making the first Markov model - for Aang!
 ```{r}
-## making trigram
+library(dplyr)
+## pulling Aang quotes
 aangQuotes <- quotes %>% filter(name == "Aang")
 
 ## replacing punctuation
@@ -158,13 +159,38 @@ aangQuotes[,2] <- trimws(gsub("\\?", " QQUESTION ", aangQuotes[,2]))
 aangQuotes[,2] <- trimws(gsub("\\!", " EEXCLAMATION ", aangQuotes[,2]))
 aangQuotes[,2] <- trimws(gsub("\\-|\\—|\\–", " DDASH ", aangQuotes[,2]))
 
+## removing empty rows
+aangQuotes <- aangQuotes[aangQuotes$quote != "",]
 
-aangTrigram <- data.table(w1=character(), w2=character(), w3=character(), counts=numeric())
 
+## allocate tons of rows now for efficiency
+totalWords <- sum(sapply(aangQuotes[,2], function(x) length(unlist(strsplit(x, " ")))))
+aangTrigram <- as.data.table(matrix(ncol = 4, nrow = totalWords+2000))
+
+colnames(aangTrigram) <- c("w1", "w2", "w3", "counts")
+aangTrigram <- aangTrigram[, w1:=as.character(w1)]
+aangTrigram <- aangTrigram[, w2:=as.character(w2)]
+aangTrigram <- aangTrigram[, w3:=as.character(w3)]
+aangTrigram <- aangTrigram[, counts:=as.integer(counts)]
+
+count <- 1L
 for(i in 1:nrow(aangQuotes)){
   ## split into tokens
-  tokens <- strsplit(aangQuotes[1,2], " ", perl=T)
+  tokens <- unlist(strsplit(aangQuotes[i,2], " ", perl=T))
+  ## remove empty strings
+  tokens <- tokens[tokens != ""]
   
+  ## add SSTART and EEND 
+  tokens <- c("SSTART", "SSTART", tokens, "EEND")
+  
+  ## loop through tokens
+  for(j in 1:(length(tokens)-2)){
+    ## check if trigram already exists in data table
+    
+    set(aangTrigram, count, names(aangTrigram), list(tokens[j], tokens[j+1], tokens[j+2], 1))
+    count = count + 1L
+  }
+ 
 }
 
 
