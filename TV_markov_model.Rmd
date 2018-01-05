@@ -204,12 +204,55 @@ generateTrigram <- function(characterName){
 
 Running trigram function for all characters
 ```{r}
-
 aangTrigram <- generateTrigram("Aang")
+kataraTrigram <- generateTrigram("Katara")
 sokkaTrigram <- generateTrigram("Sokka")
- 
+tophTrigram <- generateTrigram("Toph")
+zukoTrigram <- generateTrigram("Zuko")
+irohTrigram <- generateTrigram("Iroh")
+
 ```
 
+Using trigrams to generate next words
+```{r}
+inputWords <- c("i", "have")
+generateWord <- function(inputWords, trigram){
+  
+  inputWords <- tolower(inputWords)
+  
+  if(length(inputWords > 1) && nrow(trigram[w1 == inputWords[1] & w2 == inputWords[2], ]) > 0){ #use trigram
+    options <- trigram[w1 == inputWords[1] & w2 == inputWords[2],]
+    probs <- (options$N)/sum(options$N)
+    return(paste(inputWords[1], inputWords[2], sample(options$w3, 1, prob = probs)))
+    
+  } else if(nrow(trigram[w1 == inputWords[1], ]) > 0){ #use bigram
+    options <- trigram[w1 == inputWords[1], ]
+    probs <- (options$N)/sum(options$N)
+    return(paste(inputWords[1], sample(options$w2, 1, prob = probs)))
+    
+  } else{ #use unigram
+    options <- trigram[trigram$w1 == "sstart" & trigram$w2 == "sstart", ] #use words that are sentence starters
+    probs <- (options$N)/sum(options$N)
+    return(sample(options$w3, 1, prob = probs))
+  }
+  
+}
+
+## iterating
+generateWord("testingg", tophTrigram)
+
+
+## checking that weights are correct
+# result <- c()
+# for(i in 1:1000){
+#   result <- c(result, sample(options$w3, 1, prob = probs))
+# }
+# barplot(sort(table(result), decreasing=T))
+# barplot(probs)
+
+
+
+```
 
 Make sure to use Katz Back-off Model
 
