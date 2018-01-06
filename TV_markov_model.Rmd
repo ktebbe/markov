@@ -278,10 +278,8 @@ sentence <- "hello this"
 sentence <- generateSentence("this is", aangTrigram, 15)
 
 ## change ppause, pperiod, eexclamation, qquestion, ddash, ccomma
-library(lettercase)
 reformat <- function(sentence){
   sentence <- gsub(" pperiod", ".", sentence)
-  sentence <- gsub(" ppause", "...", sentence)
   sentence <- gsub(" eexclamation", "!", sentence)
   sentence <- gsub(" qquestion", "?", sentence)
   sentence <- gsub(" ddash", "-", sentence)
@@ -297,24 +295,14 @@ reformat <- function(sentence){
     index <- tokensToUpper[i]
     tokens[index] <- paste(toupper(substring(tokens[index], 1, 1)), substring(tokens[index], 2), sep="", collapse=" ")
   }
-  return(paste(tokens, collapse = " "))
+  sentence <- paste(tokens, collapse = " ")
+  sentence <- gsub(" ppause ", "...", sentence)
+  return(sentence)
 }
 
 reformat("omg! idk if this works? oh well")
-
-
-
-## checking that weights are correct
-# result <- c()
-# for(i in 1:1000){
-#   result <- c(result, sample(options$w3, 1, prob = probs))
-# }
-# barplot(sort(table(result), decreasing=T))
-# barplot(probs)
-
-
+reformat("yes ppause this might not work pperiod it did eexclamation woo hoo")
 
 ```
 
-Make sure to use Katz Back-off Model
 
