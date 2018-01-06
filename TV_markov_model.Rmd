@@ -215,9 +215,9 @@ irohTrigram <- generateTrigram("Iroh")
 
 Using trigrams to generate next words
 ```{r}
-inputWords <- c("i", "have")
+inputWords <- "i"
 generateWord <- function(inputWords, trigram){
-  
+  #inputWords <- tolower(unlist(strsplit(inputWords, " ")))
   inputWords <- tolower(inputWords)
   
   if(length(inputWords > 1) && nrow(trigram[w1 == inputWords[1] & w2 == inputWords[2], ]) > 0){ #use trigram
@@ -238,8 +238,70 @@ generateWord <- function(inputWords, trigram){
   
 }
 
-## iterating
-generateWord("testingg", tophTrigram)
+## iterating function
+generateSentence <- function(sentence, trigram, duration){
+    tokens <- unlist(strsplit(sentence, " ")) # split into words/punctuation
+    num <- length(tokens)
+    if(num > 2) { # keep only last two tokens, in case user entered more
+      tokens <- c(tokens[num - 1], tokens[num])
+    }
+    ########
+  
+  for(i in 1:duration){
+    num <- length(tokens)
+    if(num == 1){ # one word input
+      sentence <- generateWord(tokens, trigram) # new one- or two-word sentence
+    } else{ #two word input
+      newestQuote <- unlist(strsplit(generateWord(c(tokens[num-1], tokens[num]), trigram), " "))
+      
+      if(length(newestQuote) == 2){ # second input word not there -> replace
+        sentence <- newestQuote
+      } else{
+        sentence <- paste(sentence, newestQuote[length(newestQuote)])
+      }
+    }
+    
+    ## check for sentence ending token
+    tokens <- unlist(strsplit(sentence, " "))
+    num <- length(tokens)
+    if(tokens[num] == "eend"){
+      sentence <- paste(tokens[-num], collapse = " ")
+      return(sentence)
+    }
+  }
+  return(sentence)
+}
+
+sentence <- "hello this"
+
+
+sentence <- generateSentence("this is", aangTrigram, 15)
+
+## change ppause, pperiod, eexclamation, qquestion, ddash, ccomma
+library(lettercase)
+reformat <- function(sentence){
+  sentence <- gsub(" pperiod", ".", sentence)
+  sentence <- gsub(" ppause", "...", sentence)
+  sentence <- gsub(" eexclamation", "!", sentence)
+  sentence <- gsub(" qquestion", "?", sentence)
+  sentence <- gsub(" ddash", "-", sentence)
+  sentence <- gsub(" ccomma", ",", sentence)
+  
+  ## find start of line & tokens with sentence ending punctuation
+  tokens <- unlist(strsplit(sentence, " "))
+  sentenceEnds <- c(0, c(which(grepl("\\.", tokens)), which(grepl("!", tokens)), which(grepl("\\?", tokens))))
+  sentenceEnds <- sentenceEnds[sentenceEnds != length(tokens)] #remove last token index (if in)
+  tokensToUpper <- sentenceEnds + 1
+  
+  for(i in 1:length(tokensToUpper)){
+    index <- tokensToUpper[i]
+    tokens[index] <- paste(toupper(substring(tokens[index], 1, 1)), substring(tokens[index], 2), sep="", collapse=" ")
+  }
+  return(paste(tokens, collapse = " "))
+}
+
+reformat("omg! idk if this works? oh well")
+
 
 
 ## checking that weights are correct
