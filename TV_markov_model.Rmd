@@ -215,7 +215,6 @@ irohTrigram <- generateTrigram("Iroh")
 
 Using trigrams to generate next words
 ```{r}
-inputWords <- "i"
 generateWord <- function(inputWords, trigram){
   #inputWords <- tolower(unlist(strsplit(inputWords, " ")))
   inputWords <- tolower(inputWords)
@@ -240,7 +239,7 @@ generateWord <- function(inputWords, trigram){
 
 ## iterating function
 generateSentence <- function(sentence, trigram, duration){
-    tokens <- unlist(strsplit(sentence, " ")) # split into words/punctuation
+    tokens <- tolower(unlist(strsplit(sentence, " "))) # split into words/punctuation
     num <- length(tokens)
     if(num > 2) { # keep only last two tokens, in case user entered more
       tokens <- c(tokens[num - 1], tokens[num])
@@ -249,9 +248,9 @@ generateSentence <- function(sentence, trigram, duration){
   
   for(i in 1:duration){
     num <- length(tokens)
-    if(num == 1){ # one word input
+    if(num == 1 | num == 0){ # zero or one word input
       sentence <- generateWord(tokens, trigram) # new one- or two-word sentence
-    } else{ #two word input
+    } else{ #2+ word input
       newestQuote <- unlist(strsplit(generateWord(c(tokens[num-1], tokens[num]), trigram), " "))
       
       if(length(newestQuote) == 2){ # second input word not there -> replace
@@ -272,11 +271,6 @@ generateSentence <- function(sentence, trigram, duration){
   return(sentence)
 }
 
-sentence <- "hello this"
-
-
-sentence <- generateSentence("this is", aangTrigram, 15)
-
 ## change ppause, pperiod, eexclamation, qquestion, ddash, ccomma
 reformat <- function(sentence){
   sentence <- gsub(" pperiod", ".", sentence)
@@ -285,11 +279,13 @@ reformat <- function(sentence){
   sentence <- gsub(" ddash", "-", sentence)
   sentence <- gsub(" ccomma", ",", sentence)
   
-  ## find start of line & tokens with sentence ending punctuation
+  ## find start of line, tokens with sentence ending punctuation, "i" words, proper nouns
   tokens <- unlist(strsplit(sentence, " "))
   sentenceEnds <- c(0, c(which(grepl("\\.", tokens)), which(grepl("!", tokens)), which(grepl("\\?", tokens))))
   sentenceEnds <- sentenceEnds[sentenceEnds != length(tokens)] #remove last token index (if in)
   tokensToUpper <- sentenceEnds + 1
+  tokensToUpper <- c(tokensToUpper, which(tokens == "i"), which(tokens == "i'll"), which(tokens == "i'd")) ## or "I" words
+  tokensToUpper <- unique(tokensToUpper) ## remove duplicates
   
   for(i in 1:length(tokensToUpper)){
     index <- tokensToUpper[i]
@@ -300,9 +296,18 @@ reformat <- function(sentence){
   return(sentence)
 }
 
-reformat("omg! idk if this works? oh well")
+reformat("omg! idk if i'll work? oh well")
 reformat("yes ppause this might not work pperiod it did eexclamation woo hoo")
 
 ```
+Testing
+```{r}
+reformat(generateSentence("", aangTrigram, 15))
 
+reformat(generateSentence("we're leaving", aangTrigram, 15))
+
+## find proper nouns!!
+
+
+```
 

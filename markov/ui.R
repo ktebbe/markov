@@ -8,9 +8,10 @@ shinyUI(fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-       uiOutput("entry"),
        uiOutput("charactersUI"),
-       uiOutput("buttonUI")
+       uiOutput("inputTextUI"),
+       uiOutput("generateButtonUI"),
+       uiOutput("randomButtonUI")
     ),
     
    
