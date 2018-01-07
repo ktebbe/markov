@@ -58,7 +58,7 @@ generateSentence <- function(sentence, trigram, duration){
       newestQuote <- unlist(strsplit(generateWord(c(tokens[num-1], tokens[num]), trigram), " "))
       
       if(length(newestQuote) == 2){ # second input word not there -> replace
-        sentence <- newestQuote
+        sentence <- paste(newestQuote, collapse = " ")
       } else{
         sentence <- paste(sentence, newestQuote[length(newestQuote)])
       }
@@ -74,7 +74,6 @@ generateSentence <- function(sentence, trigram, duration){
   }
   return(sentence)
 }
-
 ## change ppause, pperiod, eexclamation, qquestion, ddash, ccomma
 reformat <- function(sentence){
   sentence <- gsub(" pperiod", ".", sentence)

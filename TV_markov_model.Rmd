@@ -216,8 +216,8 @@ irohTrigram <- generateTrigram("Iroh")
 Using trigrams to generate next words
 ```{r}
 generateWord <- function(inputWords, trigram){
-  #inputWords <- tolower(unlist(strsplit(inputWords, " ")))
-  inputWords <- tolower(inputWords)
+  inputWords <- tolower(unlist(strsplit(inputWords, " ")))
+  #inputWords <- tolower(inputWords)
   
   if(length(inputWords > 1) && nrow(trigram[w1 == inputWords[1] & w2 == inputWords[2], ]) > 0){ #use trigram
     options <- trigram[w1 == inputWords[1] & w2 == inputWords[2],]
@@ -254,7 +254,7 @@ generateSentence <- function(sentence, trigram, duration){
       newestQuote <- unlist(strsplit(generateWord(c(tokens[num-1], tokens[num]), trigram), " "))
       
       if(length(newestQuote) == 2){ # second input word not there -> replace
-        sentence <- newestQuote
+        sentence <- paste(newestQuote, collapse = " ")
       } else{
         sentence <- paste(sentence, newestQuote[length(newestQuote)])
       }
@@ -295,10 +295,6 @@ reformat <- function(sentence){
   sentence <- gsub(" ppause ", "...", sentence)
   return(sentence)
 }
-
-reformat("omg! idk if i'll work? oh well")
-reformat("yes ppause this might not work pperiod it did eexclamation woo hoo")
-
 ```
 Testing
 ```{r}
@@ -308,6 +304,12 @@ reformat(generateSentence("we're leaving", aangTrigram, 15))
 
 ## find proper nouns!!
 
+
+## iroh error - Iroh : I you will find your own body flow, the switch to a better place. Eend promise you will find your own body flow, the switch to a better place. 
+reformat(generateSentence("better place pperiod", irohTrigram, 15))
+
+reformat(generateSentence("i like", irohTrigram, 20))
+generateSentence("i like", irohTrigram, 20)
 
 ```
 
