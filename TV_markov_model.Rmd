@@ -292,7 +292,7 @@ reformat <- function(sentence){
     tokens[index] <- paste(toupper(substring(tokens[index], 1, 1)), substring(tokens[index], 2), sep="", collapse=" ")
   }
   sentence <- paste(tokens, collapse = " ")
-  sentence <- gsub(" ppause ", "...", sentence)
+  sentence <- gsub("ppause", "...", sentence)
   return(sentence)
 }
 ```
@@ -300,7 +300,9 @@ Testing
 ```{r}
 reformat(generateSentence("", aangTrigram, 15))
 
-reformat(generateSentence("we're leaving", aangTrigram, 15))
+reformat(generateSentence("want to", kataraTrigram, 15))
+
+
 
 ## find proper nouns!! loop through original quotes
 properNouns <- c()

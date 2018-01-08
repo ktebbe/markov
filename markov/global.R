@@ -95,6 +95,6 @@ reformat <- function(sentence){
     tokens[index] <- paste(toupper(substring(tokens[index], 1, 1)), substring(tokens[index], 2), sep="", collapse=" ")
   }
   sentence <- paste(tokens, collapse = " ")
-  sentence <- gsub(" ppause ", "...", sentence)
+  sentence <- gsub("ppause", "...", sentence)
   return(sentence)
 }
