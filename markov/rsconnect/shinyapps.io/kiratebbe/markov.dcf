@@ -1,0 +1,12 @@
+name: markov
+title: markov
+username:
+account: kiratebbe
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 254922
+bundleId: 1167472
+url: https://kiratebbe.shinyapps.io/markov/
+when: 1515445486.51048
+asMultiple: FALSE
+asStatic: FALSE

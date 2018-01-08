@@ -1,6 +1,7 @@
 library(shiny)
 library(dplyr)
 ## button inspiration from - https://gist.github.com/aagarw30/2b46c89e686a956098e20cb90b1cf004
+## icons here - http://fontawesome.io/icons/
 
 
 shinyServer(function(input, output) {
@@ -12,9 +13,12 @@ shinyServer(function(input, output) {
   
   ##----- sidebar widgets ------##
   output$charactersUI <- renderUI({
-    checkboxGroupInput("characters", label = h3("Who?"), 
+    checkboxGroupInput("characters", label = h3("Who?"),
                        choices = list("Aang", "Sokka", "Katara", "Toph", "Zuko", "Iroh"),
                        selected = "Aang")
+    # checkboxGroupInput("characters", label = h3("Who?"), 
+    #                    choiceNames = list(icon("arrow-down"), icon("bed"), icon("cog"), icon("bug")),
+    #                    choiceValues = list("calendar", "bed", "cog", "bug"))
     
   }) 
   output$inputTextUI <- renderUI({
@@ -48,9 +52,6 @@ shinyServer(function(input, output) {
   
   output$textUI <- renderUI({
     names <- isolate(input$characters)
-    
-    ## if user presses button with no characters selected
-    #if(length(input$characters) == 0) return("Please select a character.")
     
     
     userInput <- isolate(input$text)

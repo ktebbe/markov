@@ -1,5 +1,5 @@
 ##------ read in trigrams -------##
-
+library(data.table)
 tophTrigram <- as.data.table(read.csv("tophTrigram.csv", as.is=T))
 tophTrigram <- tophTrigram[, -1]
 

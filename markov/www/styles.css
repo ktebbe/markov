@@ -1,15 +1,9 @@
 #textUI{font-size: 20px;
        }
        
-h1 {
-  font-family: Papyrus,fantasy;
+h1 {font-family: Papyrus,fantasy;
     font-weight: 500;
     line-height: 1.1;
       }
       
-#generateButton{background: red;}
-       
-       
-#randomButton{outline: red dotted thin;}
-                         
               
