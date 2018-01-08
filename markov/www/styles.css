@@ -1,12 +1,15 @@
-#charactersUI{color: red;
-       font-size: 20px;
-       font-style: italic;
+#textUI{font-size: 20px;
        }
        
-h1 {   
-        font-weight: 500;
-        line-height: 1.1;
-        color: #48ca3b;
+h1 {
+  font-family: Papyrus,fantasy;
+    font-weight: 500;
+    line-height: 1.1;
       }
+      
+#generateButton{background: red;}
+       
+       
+#randomButton{outline: red dotted thin;}
                          
               
