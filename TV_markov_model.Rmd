@@ -284,7 +284,7 @@ reformat <- function(sentence){
   sentenceEnds <- c(0, c(which(grepl("\\.", tokens)), which(grepl("!", tokens)), which(grepl("\\?", tokens))))
   sentenceEnds <- sentenceEnds[sentenceEnds != length(tokens)] #remove last token index (if in)
   tokensToUpper <- sentenceEnds + 1
-  tokensToUpper <- c(tokensToUpper, which(tokens == "i"), which(tokens == "i'll"), which(tokens == "i'd")) ## or "I" words
+  tokensToUpper <- c(tokensToUpper, which(tokens == "i"), which(tokens == "i'll"), which(tokens == "i'd"),  which(tokens == "i've")) ## or "I" words
   tokensToUpper <- unique(tokensToUpper) ## remove duplicates
   
   for(i in 1:length(tokensToUpper)){
