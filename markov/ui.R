@@ -1,9 +1,9 @@
 library(shiny)
 
-shinyUI(fluidPage(
+shinyUI(fluidPage(theme = "styles.css",
   
   # Application title
-  titlePanel("Avatar: The Last Airbender Dialogue Generator"),
+  headerPanel("Avatar: The Last Airbender Dialogue Generator"),
   
   
   sidebarLayout(

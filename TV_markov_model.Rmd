@@ -302,11 +302,25 @@ reformat(generateSentence("", aangTrigram, 15))
 
 reformat(generateSentence("we're leaving", aangTrigram, 15))
 
-## find proper nouns!!
+## find proper nouns!! loop through original quotes
+properNouns <- c()
+for(i in 1:nrow(top_quotes)){
+  words <- unlist(strsplit(top_quotes$quote[i], " "))
+  words <- words[words != ""] # take out empty strings
+  puncWords <- unique(c(which(grepl("\\.", words)), which(grepl("!", words)), which(grepl("\\?", words))))
+  words <- words[-(puncWords + 1)] # take out words after punctuation 
+  
+  words <- words[-1] # take out first word (start of sentence)
+  
+  words <- words[which(grepl("^[[:upper:]]", words))] # leave only word with capitalization 
+  words <- gsub('[[:punct:] ]+', '', words) # remove punctuation
+  
+  properNouns <- c(properNouns, words)
+}
+properNouns <- unique(properNouns)
 
+grepl("^[[:upper:]]", c("testing", "Testing"))
 
-## iroh error - Iroh : I you will find your own body flow, the switch to a better place. Eend promise you will find your own body flow, the switch to a better place. 
-reformat(generateSentence("better place pperiod", irohTrigram, 15))
 
 reformat(generateSentence("i like", irohTrigram, 20))
 generateSentence("i like", irohTrigram, 20)
